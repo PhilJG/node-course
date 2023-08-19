@@ -3,7 +3,6 @@ const fs = require('fs');
 const http = require('http');
 const url = require('url');
 
-
 /////////////
 ///Files
 
@@ -41,8 +40,9 @@ const replaceTemplate = (temp, product) => {
     let output = temp.replaceAll(/{%PRODUCTNAME%}/g, product.productName)
     output = output.replaceAll(/{%IMAGE%}/g, product.image)
     output = output.replaceAll(/{%PRICE%}/g, product.price)
-    output = output.replaceAll(/{%NUTRIENTS%}/g, product.from)
+    output = output.replaceAll(/{%FROM%}/g, product.from)
     output = output.replaceAll(/{%QUANTITY%}/g, product.quantity)
+    output = output.replaceAll(/{%NUTRIENTS%}/g, product.nutrients)
     output = output.replaceAll(/{%DESCRIPTION%}/g, product.description)
     output = output.replaceAll(/{%ID%}/g, product.id)
 
@@ -58,14 +58,16 @@ const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, 'u
 const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8')
 
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
-
 const dataObj = JSON.parse(data)
 
 const server = http.createServer((req, res) => {
-    const pathName = req.url;
+
+    //true passes query into an object
+    //{destructuring} will pass the two property names of this object
+    const { query, pathname } = url.parse(req.url, true);
 
     //Overview Page
-    if (pathName === '/' || pathName === '/overview') {
+    if (pathname === '/' || pathname === '/overview') {
         res.writeHead(200, { 'Content-type': 'text/html' })
 
         //join('') will join all elements into a string
@@ -74,11 +76,15 @@ const server = http.createServer((req, res) => {
         res.end(output);
 
         //Product Page
-    } else if (pathName === '/product') {
-        res.end('This is the PRODUCT')
+    } else if (pathname === '/product') {
+        res.writeHead(200, { 'Content-type': 'text/html' })
+        const product = dataObj[query.id];
+        const output = replaceTemplate(tempProduct, product);
+
+        res.end(output)
 
         //API
-    } else if (pathName === '/api') {
+    } else if (pathname === '/api') {
         //tel the browser we are sending by json
         res.writeHead(200, { 'Content-type': 'application/json' })
         //This data now comes from top level code
