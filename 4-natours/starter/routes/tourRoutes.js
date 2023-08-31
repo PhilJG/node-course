@@ -4,12 +4,15 @@ const tourController = require('./../controllers/tourController');
 
 const router = express.Router();
 
+//val holds the value of the id parameter
+router.param('id', tourController.checkID);
+
 router
   .route('/')
   .get(tourController.getAllTours)
   .post(tourController.createTour);
 router
-  .route('/ :id')
+  .route('/:id')
   .get(tourController.getTour)
   .patch(tourController.updateTour)
   .delete(tourController.deleteTour);

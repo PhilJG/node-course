@@ -4,6 +4,19 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkID = (req, res, next, val) => {
+  console.log(`Tour ID is: ${val}`);
+
+  if (req.params.id * 1 > tours.length) {
+    //make sure after response has been sent then the function will return and never call next()
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   console.log(req.requestTime);
 
@@ -24,13 +37,7 @@ exports.getTour = (req, res) => {
   const id = req.params.id * 1;
   //.find() loop through array an return T of F operations and only return true element ids
   const tour = tours.find((el) => el.id === id);
-  // if (id > tours.length) {
-  if (!tour) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
+  // if (id > tours.length)
 
   res.status(200).json({
     status: 'success',
@@ -41,8 +48,6 @@ exports.getTour = (req, res) => {
 };
 
 exports.createTour = (req, res) => {
-  // console.log(req.body);
-
   const newId = tours[tours.length - 1].id + 1;
 
   //.assign() merges new and existing objects together
@@ -65,13 +70,6 @@ exports.createTour = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-  if (req.params.id * 1 > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -81,13 +79,6 @@ exports.updateTour = (req, res) => {
 };
 
 exports.deleteTour = (req, res) => {
-  if (req.params.id * 1 > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   res.status(204).json({
     status: 'success',
     data: null,
