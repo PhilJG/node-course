@@ -17,6 +17,39 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
+// Create a checkBody middleware
+exports.checkBody = (req, res, next) => {
+  // Check if body contains the name and price property
+  if (!req.body.name || !req.body.price) {
+    // If not, send back 400 (bad request)
+    return res.status(400).json({
+      status: 'Fail',
+      message: 'Missing name or price',
+    });
+  }
+  next();
+};
+
+// exports.checkBody = (req, res, next, val) => {
+//   console.log(`price is ${val}`);
+
+//   if (req.params.price != tours.price) {
+//     console.log('price not found');
+
+//     res.status(404).json({
+//       status: 'fail',
+//       message: 'No price',
+//     });
+//   } else {
+//     console.log(`price is ${val}`);
+
+//     // res.status(200).json({
+//     //   status: 'price found',
+//     // });
+//   }
+//   next();
+// };
+
 exports.getAllTours = (req, res) => {
   console.log(req.requestTime);
 
