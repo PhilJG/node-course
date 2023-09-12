@@ -182,43 +182,31 @@
 
 const http = require('http');
 const fs = require('fs');
-const path = require('path'); //Added path module to handle file paths
 
 //Get content of HTML CSS, JS
 //Note that we are going to serve the contents of the file and not the file itself. So readFileSync() comes into picture.
 const homePage = fs.readFileSync('./navbar-app/index.html');
+const homeStyles = fs.readFileSync('./navbar-app/style.css');
 const homeLogo = fs.readFileSync('./navbar-app/logo.svg');
-// const homeStyles = fs.readFileSync('./navbar-app/style.css');
-// const homeLogic = fs.readFileSync('./navbar-app/browser-app.js');
+const homeLogic = fs.readFileSync('./navbar-app/browser-app.js');
 
 const server = http.createServer((request, response) => {
-  const static = path.join(__dirname, 'navbar-app');
-
   if (request.url === '/') {
     response.writeHead(200, { 'content-type': 'text/html' });
     response.write(homePage);
     response.end();
-  } else if (request.url.startsWith('/')) {
-    // Check if the request starts with '/'
-    // Read the file from the static directory and the request url
-    fs.readFile(path.join(static, request.url), (err, data) => {
-      if (err) {
-        response.writeHead(404);
-        response.end();
-      } else {
-        //determine the content type
-        let contentType;
-        if (request.url.endsWith('.css')) {
-          contentType = 'text/css';
-        } else if (request.url.endsWith('.js')) {
-          contentType = 'text/javascript';
-        } else if (request.url.endsWith('.svg')) {
-          contentType = 'image/svg+xml';
-        }
-        response.writeHead(200, { 'content-type': contentType });
-        response.end(data);
-      }
-    });
+  } else if (request.url === '/style.css') {
+    response.writeHead(200, { 'content-type': 'text/css' });
+    response.write(homeStyles);
+    response.end();
+  } else if (request.url === '/browser-app.js') {
+    response.writeHead(200, { 'content-type': 'text/javascript' });
+    response.write(homeLogic);
+    response.end();
+  } else if (request.url === '/logo.svg') {
+    response.writeHead(200, { 'content-type': 'image/svg+xml' });
+    response.write(homeLogo);
+    response.end();
   } else if (request.url === '/contact') {
     response.writeHead(200, { 'content-type': 'text/html' });
     response.write('<h1>Contact Page</h1>');
@@ -239,16 +227,3 @@ const server = http.createServer((request, response) => {
 server.listen(5000, () => {
   console.log(`Server listening at port ${5000}`);
 });
-
-// } else if (request.url === '/style.css') {
-//   response.writeHead(200, { 'content-type': 'text/css' });
-//   response.write(homeStyles);
-//   response.end();
-// } else if (request.url === '/browser-app.js') {
-//   response.writeHead(200, { 'content-type': 'text/javascript' });
-//   response.write(homeLogic);
-//   response.end();
-// } else if (request.url === '/logo.svg') {
-//   response.writeHead(200, { 'content-type': 'image/svg+xml' });
-//   response.write(homeLogo);
-//   response.end();
