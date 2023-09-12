@@ -1,0 +1,15 @@
+.
+├── app.js
+├── directory_tree.txt
+├── hello.js
+├── navbar-app
+│   ├── browser-app.js
+│   ├── index.html
+│   ├── logo.svg
+│   └── style.css
+├── package.json
+├── package-lock.json
+├── tree.txt
+└── txt
+
+3 directories, 10 files
